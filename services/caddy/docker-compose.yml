@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: fxmq.net:local
-    container_name: fxmq.net
+    image: caddy:local
+    container_name: caddy
     restart: unless-stopped
 
     # Hard RAM cap (no container swap) — survives recreates, unlike `docker update`.
