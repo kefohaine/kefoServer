@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>server — doors</title>
+<title>{{DOMAIN}} — tailnet doors</title>
 <style>
   :root { --w:#eaeaea; --gray:#8b949e; --green:#3bf07a; --purple:#b48cff;
           --amber:#ffcc66; --bg:#07090a; --sel:#12331f; }
@@ -38,18 +38,17 @@
 </head>
 <body>
 <div class="stage">
-  <h1>{{DOMAIN}} — every door</h1>
-  <p class="sub">the complete list of this domain's webpages — public and tailnet-only — fetched live from <b>/targets.json</b> on every visit. nothing is stored in the browser.</p>
+  <h1>{{DOMAIN}} — tailnet doors</h1>
+  <p class="sub">every route of this domain that exists <b>only inside the tailnet</b> (this door list and the host shell), fetched live from <b>/targets.json</b> on every visit. public pages are not listed here — the tailnet hostname itself is unreachable from outside the tailnet.</p>
   <ul class="doors" id="doors"></ul>
   <p class="fresh" id="fresh"><span class="dot">&#9679;</span> live</p>
 </div>
 <script>
 "use strict";
 // The tailnet homepage: no terminal, no session, no commands — just the
-// complete door list, re-fetched from the generated catalogue on EVERY
+// tailnet-only routes, re-fetched from the generated catalogue on EVERY
 // load (cache: "no-store" + the vhost's no-cache headers guarantee a
-// fresh response). tail targets (url === "/") link within this vhost;
-// every other target links to its own host.
+// fresh response). A tail route (url === "/") links within this vhost.
 var doorsEl = document.getElementById("doors"),
     freshEl = document.getElementById("fresh");
 function esc(s) {
@@ -57,8 +56,14 @@ function esc(s) {
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
   });
 }
+// A device shell card reads "shell <device>"; the plain shell reads "shell".
+function label(p) {
+  var m = /^ttyd\?arg=(.+)$/.exec(p);
+  return m ? "shell " + m[1] : p;
+}
 function render(targets, stamp) {
   doorsEl.textContent = "";
+  var count = 0;
   targets.forEach(function (t) {
     var li = document.createElement("li");
     var a = document.createElement("a");
@@ -74,21 +79,21 @@ function render(targets, stamp) {
         var pa = document.createElement("a");
         pa.className = "pg";
         pa.href = t.url.replace(/\/$/, "") + t.pages[p];
-        pa.textContent = "/" + p;
+        pa.textContent = label(p);
         wrap.appendChild(pa);
+        count++;
       });
       li.appendChild(wrap);
     }
     doorsEl.appendChild(li);
   });
-  freshEl.innerHTML = '<span class="dot">&#9679;</span> fetched ' + esc(stamp) + " — " + targets.length + " doors";
+  freshEl.innerHTML = '<span class="dot">&#9679;</span> fetched ' + esc(stamp) +
+    " — " + count + " tailnet route(s)";
 }
 fetch("/targets.json", { cache: "no-store" })
   .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
   .then(function (j) {
-    var targets = (j && j.targets) || [];
-    targets.sort(function (x, y) { return x.host < y.host ? -1 : x.host > y.host ? 1 : 0; });
-    render(targets, new Date().toTimeString().slice(0, 8));
+    render((j && j.targets) || [], new Date().toTimeString().slice(0, 8));
   })
   .catch(function (e) {
     doorsEl.textContent = "";
