@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# scripts/storage.sh — make a storage VPS (e.g. 1 TB / 2 GB) the LIVE
+# scripts/datadir-nfs.sh — (was scripts/datadir-nfs.sh) make a storage VPS (e.g. 1 TB / 2 GB) the LIVE
 # Nextcloud datadirectory, mounted over the tailnet via NFS. PostgreSQL stays
 # on the Nextcloud host; the datadirectory (user files + appdata) physically
 # lives on the storage VPS. The nightly pg_dump is pushed there too (backups
@@ -39,8 +39,8 @@ QUOTA="${QUOTA:-}"
 NC_MOUNT="${NC_MOUNT:-/srv/nextcloud-data}"          # dir on the storage VPS
 LOCAL_MOUNT=$ROOT/data/cloud/users   # NC datadirectory (host path)
 
-log() { echo "[storage] $*"; }
-die() { echo "[storage] FATAL: $*" >&2; exit 1; }
+log() { echo "[datadir] $*"; }
+die() { echo "[datadir] FATAL: $*" >&2; exit 1; }
 
 # ---------- auto-detect the Nextcloud host ----------
 command -v docker >/dev/null || die "docker not found on this host"
@@ -284,7 +284,7 @@ sudo test -f /root/.ssh/id_ed25519 || sudo ssh-keygen -t ed25519 -N "" -f /root/
 sudo SSHPASS="$SSHPASS" sshpass -e ssh-copy-id -o StrictHostKeyChecking=accept-new "root@$TS_IP" >/dev/null 2>&1 \
   || fail cron "ssh key copy"
 sudo tee /etc/cron.d/nc-storage >/dev/null <<EOF
-# Off-host Nextcloud DB backup -> storage:/backups/nc (installed by scripts/storage.sh)
+# Off-host Nextcloud DB backup -> storage:/backups/nc (installed by scripts/datadir-nfs.sh)
 30 2 * * * root docker exec $PG_CONTAINER pg_dump -U $PG_USER -d $PG_DB -Fc | ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new root@$TS_IP "mkdir -p /backups/nc && cat > /backups/nc/nextcloud-\$(date +\%F).dump && ls -t /backups/nc/nextcloud-*.dump 2>/dev/null | tail -n +8 | xargs -r rm"
 EOF
 log "nightly pg_dump -> storage:/backups/nc installed (keeps 7)"
