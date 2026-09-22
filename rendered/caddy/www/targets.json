@@ -3,34 +3,25 @@
   "targets": [
     {
       "name": "cloud",
-      "host": "cloud.{{DOMAIN}}",
-      "url": "https://cloud.{{DOMAIN}}/",
+      "host": "cloud.",
+      "url": "https://cloud./",
       "pages": {}
     },
     {
       "name": "kuma",
-      "host": "kuma.{{DOMAIN}}",
-      "url": "https://kuma.{{DOMAIN}}/",
+      "host": "kuma.",
+      "url": "https://kuma./",
       "pages": {}
     },
     {
       "name": "mail",
-      "host": "mail.{{DOMAIN}}",
-      "url": "https://mail.{{DOMAIN}}/",
+      "host": "mail.",
+      "url": "https://mail./",
       "pages": {}
     },
     {
-      "name": "mc",
-      "host": "mc.{{DOMAIN}}",
-      "url": "https://mc.{{DOMAIN}}/",
-      "pages": {
-        "panel": "/panel",
-        "play": "/play"
-      }
-    },
-    {
       "name": "tail",
-      "host": "tail.{{DOMAIN}}",
+      "host": "tail.",
       "url": "/",
       "pages": {
         "ttyd": "/ttyd"
@@ -38,22 +29,22 @@
     },
     {
       "name": "talk",
-      "host": "talk.{{DOMAIN}}",
-      "url": "https://talk.{{DOMAIN}}/",
+      "host": "talk.",
+      "url": "https://talk./",
       "pages": {
         "signaling": "/signaling"
       }
     },
     {
       "name": "vault",
-      "host": "vault.{{DOMAIN}}",
-      "url": "https://vault.{{DOMAIN}}/",
+      "host": "vault.",
+      "url": "https://vault./",
       "pages": {}
     },
     {
       "name": "www",
-      "host": "www.{{DOMAIN}}",
-      "url": "https://www.{{DOMAIN}}/",
+      "host": "www.",
+      "url": "https://www./",
       "pages": {
         "download": "/download",
         "welcome": "/welcome",
